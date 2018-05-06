@@ -73,7 +73,7 @@ RUN cd \
         --with-file-aio \
         --with-http_v2_module \
         --with-openssl=$HOME/openssl-${OPENSSL_VERSION} \
-        --add-dynamic-module=$HOME/ngx_pagespeed-${NPS_VERSION}
+        --add-dynamic-module=$HOME/ngx_pagespeed-${NPS_VERSION} \
     && make \
     && make install
 
