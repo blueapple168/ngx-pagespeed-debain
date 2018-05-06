@@ -4,7 +4,7 @@ MAINTAINER blueapple <blueapple1120@qq.com>
 
 ENV OPENSSL_VERSION 1.1.0h
 ENV NGINX_VERSION 1.13.3
-ENV NPS_VERSION 1.13.35.2-stable
+ENV NPS_VERSION 1.12.34.2-stable
 
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
