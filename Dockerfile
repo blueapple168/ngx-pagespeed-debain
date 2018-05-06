@@ -43,35 +43,13 @@ RUN cd \
         --lock-path=/var/run/nginx.lock \
         --error-log-path=/var/log/nginx/error.log \
         --http-log-path=/var/log/nginx/access.log \
-        --with-http_ssl_module \
-        --with-http_realip_module \
-        --with-http_addition_module \
-        --with-http_sub_module \
-        --with-http_dav_module \
-        --with-http_flv_module \
-        --with-http_mp4_module \
-        --with-http_gunzip_module \
-        --with-http_gzip_static_module \
-        --with-http_random_index_module \
-        --with-http_secure_link_module \
-        --with-http_stub_status_module \
-        --with-http_auth_request_module \
-        --with-http_xslt_module=dynamic \
-        --with-http_image_filter_module=dynamic \
-        --with-http_geoip_module=dynamic \
+        --with-pcre-jit \
         --with-threads \
-        --with-stream \
-        --with-stream_ssl_module \
-        --with-stream_ssl_preread_module \
-        --with-stream_realip_module \
-        --with-stream_geoip_module=dynamic \
-        --with-http_slice_module \
-        --with-mail \
-        --with-mail_ssl_module \
-        --with-compat \
-        --with-file-aio \
-        --with-http_v2_module \
+        --with-http_gzip_static_module \
+        --with-http_ssl_module \
         --with-openssl=$HOME/openssl-${OPENSSL_VERSION} \
+        --with-http_v2_module \
+        --with-http_stub_status_module \
         --add-dynamic-module=$HOME/ngx_pagespeed-${NPS_VERSION} \
     && make \
     && make install
@@ -81,7 +59,7 @@ RUN apt-get purge build-essential -y \
     && apt-get autoremove -y
 
 RUN useradd --system --no-create-home --user-group nginx
-COPY ./nginx.conf /etc/nginx/nginx.conf
+
 # forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
