@@ -49,7 +49,6 @@ RUN cd \
 	--with-http_realip_module \
 	--with-http_flv_module  \
 	--with-http_mp4_module  \
-        --with-http_image_filter_module \
 	--with-http_gunzip_module  \
 	--with-http_gzip_static_module  \
 	--with-http_random_index_module  \
