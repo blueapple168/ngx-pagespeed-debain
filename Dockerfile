@@ -45,7 +45,6 @@ RUN cd \
         --error-log-path=/var/log/nginx/error.log \
         --http-log-path=/var/log/nginx/access.log \
         --with-http_ssl_module  \
-	--with-http_geoip_module \
 	--with-http_realip_module \
 	--with-http_flv_module  \
 	--with-http_mp4_module  \
@@ -64,10 +63,6 @@ RUN cd \
 	--with-mail \
 	--with-mail_ssl_module \
 	--with-stream \
-	--with-stream_realip_module \
-	--with-stream_ssl_module \
-	--with-stream_ssl_preread_module \
-        --with-http_gzip_static_module \
         --with-openssl=$HOME/openssl-${OPENSSL_VERSION} \
         --with-http_v2_module \
         --with-http_stub_status_module \
