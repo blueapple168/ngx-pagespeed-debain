@@ -54,6 +54,7 @@ RUN cd \
 	--with-http_random_index_module  \
 	--with-http_secure_link_module \
 	--with-http_auth_request_module  \
+	--with-http_image_filter_module \
 	--with-compat \
 	--with-file-aio \
 	--with-threads \
