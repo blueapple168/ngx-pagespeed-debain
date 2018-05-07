@@ -8,7 +8,7 @@ ENV NPS_VERSION 1.13.35.2-stable
 
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
-        ca-certificates build-essential wget libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev unzip uuid-dev libgd2-xpm libgd2-xpm-dev
+        ca-certificates build-essential wget libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev unzip uuid-dev
 
 RUN cd && wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz \
     && tar -xvzf openssl-${OPENSSL_VERSION}.tar.gz \
@@ -54,7 +54,6 @@ RUN cd \
 	--with-http_random_index_module  \
 	--with-http_secure_link_module \
 	--with-http_auth_request_module  \
-	--with-http_image_filter_module \
 	--with-compat \
 	--with-file-aio \
 	--with-threads \
