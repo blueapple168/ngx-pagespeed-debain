@@ -2,73 +2,23 @@ FROM debian:stretch-slim
 
 MAINTAINER blueapple <blueapple1120@qq.com>
 
-ENV OPENSSL_VERSION 1.1.0h
-ENV NGINX_VERSION 1.13.3
-ENV NPS_VERSION 1.13.35.2-stable
-
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
-        ca-certificates build-essential wget libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev unzip uuid-dev
+        ca-certificates build-essential wget libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev unzip uuid-dev \
+	&& apt-get clean all \
+	&& cp -r -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+	&& apt-get install -y http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm \
+	&& apt-get install -y https://extras.getpagespeed.com/redhat/7/noarch/RPMS/getpagespeed-extras-7-0.el7.gps.noarch.rpm \
+	&& apt-get install -y nginx \
+	&& apt-get install -y nginx-module-nps \
+	&& rm -rf /tmp/* \
+	# Forward request and error logs to docker log collector
+	&& ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
-RUN cd && wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz \
-    && tar -xvzf openssl-${OPENSSL_VERSION}.tar.gz \
-    && cd openssl-${OPENSSL_VERSION} \
-    && ./config \
-      --prefix=/usr/local \
-      --openssldir=/usr/local/ssl \
-    && make \
-    && make install \
-    && make clean
+COPY ./conf.d /etc/nginx/conf.d
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-RUN cd \
-    && wget https://github.com/pagespeed/ngx_pagespeed/archive/v${NPS_VERSION}.tar.gz \
-    && tar -xvzf v${NPS_VERSION}.tar.gz \
-    && mv incubator-pagespeed-ngx-${NPS_VERSION} ngx_pagespeed-${NPS_VERSION} \
-    && cd ngx_pagespeed-${NPS_VERSION}/ \
-    && [ -e scripts/format_binary_url.sh ] && psol_url=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
-    && wget ${psol_url} \
-    && tar -xvzf $(basename ${psol_url})  # extracts to psol/
-
-
-RUN cd \
-    && wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
-    && tar -xzvf nginx-${NGINX_VERSION}.tar.gz \
-    && cd nginx-${NGINX_VERSION} \
-    && ./configure \
-        --prefix=/usr/local/nginx \
-        --user=nginx \
-        --group=nginx \
-        --sbin-path=/usr/sbin/nginx \
-        --conf-path=/etc/nginx/nginx.conf \
-        --pid-path=/var/run/nginx.pid \
-        --lock-path=/var/run/nginx.lock \
-        --error-log-path=/var/log/nginx/error.log \
-        --http-log-path=/var/log/nginx/access.log \
-        --with-pcre-jit \
-        --with-threads \
-        --with-http_gzip_static_module \
-        --with-http_ssl_module \
-        --with-openssl=$HOME/openssl-${OPENSSL_VERSION} \
-        --with-http_v2_module \
-        --with-http_stub_status_module \
-        --add-dynamic-module=$HOME/ngx_pagespeed-${NPS_VERSION} \
-    && make \
-    && make install
-
-RUN rm -rf $HOME
-RUN apt-get purge build-essential -y \
-    && apt-get autoremove -y
-
-RUN useradd --system --no-create-home --user-group nginx
-
-# forward request and error logs to docker log collector
-RUN ln -sf /dev/stdout /var/log/nginx/access.log
-RUN ln -sf /dev/stderr /var/log/nginx/error.log
-
-VOLUME ["/var/cache/nginx"]
-
+VOLUME ["/var/cache/ngx_pagespeed"]
 EXPOSE 80 443
-
-STOPSIGNAL SIGTERM
-
 CMD ["nginx", "-g", "daemon off;"]
